@@ -1,0 +1,42 @@
+function checkdrive() {
+  var SS=SpreadsheetApp.openByUrl('https://docs.google.com/spreadsheets/d/1BFZrAvdjg6tzjkjJFVQm1UxbT_NJyjG-qCnjH2PSG60/edit#gid=565179212');
+  var savefolder = DriveApp.getFoldersByName("HCM Scan BLX Cà vẹt_Images");
+  var recordsheet=SS.getSheetByName("Check Drive Daily");
+  recordsheet.getRangeList(['D2:D1000', 'B2:B1000', 'A2:A1000']).activate()
+  .clear({contentsOnly: true, skipFilteredRows: true});
+  var recentday=Utilities.formatString("%02d",new Date().getDate());
+  var recentmonth=Utilities.formatString("%02d",new Date().getMonth()+1);
+  var recentyear=new Date().getFullYear();
+  var recenttoday=recentday+"/"+recentmonth+"/"+recentyear;
+  Logger.log(recenttoday);
+  var folders=savefolder.next();
+  Logger.log(folders.getName());
+  var todayfolder=folders.getFoldersByName(recenttoday);
+  var todayfolders=todayfolder.next();
+  //Logger.log(driverfolder.getName())
+  var driverfolders=todayfolders.getFolders();
+
+  //var tenlist=[];
+  var thutu = 0;
+  while (driverfolders.hasNext()) {
+  var folder = driverfolders.next();
+  var ten=folder.getName();
+  //tenlist.append(ten);
+  //Logger.log(ten);
+  thutu +=1;
+  //Logger.log(thutu)
+  var thutucol=recordsheet.getRange(thutu+1,1,1,1).setValue(thutu);
+  var tencol=recordsheet.getRange(thutu+1,2,1,1).setValue(ten);
+  var slfiles=folder.getFiles();
+  var i =0;
+  while (slfiles.hasNext()) {
+    slfile = slfiles.next();
+    i +=1;
+ var slfilecol=recordsheet.getRange(thutu+1,4,1,1).setValue(i);
+ }
+  //Logger.log(i);
+//}
+ 
+}
+
+}
