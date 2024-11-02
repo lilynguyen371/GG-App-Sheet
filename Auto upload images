@@ -1,0 +1,44 @@
+function newflow() {
+var SS=SpreadsheetApp.openByUrl('https://docs.google.com/spreadsheets/d/1BFZrAvdjg6tzjkjJFVQm1UxbT_NJyjG-qCnjH2PSG60/edit#gid=565179212');
+var sheet=SS.getSheetByName("Form Scan");
+var savefolder = DriveApp.getFoldersByName("HCM Scan BLX Cà vẹt_Images");
+  var folders=savefolder.next();
+  var uploadfiles = folders.getFiles();
+  while (uploadfiles.hasNext()) {
+    var uploadfile=uploadfiles.next();
+    var key=uploadfile.getName().split(".")[0];
+    Logger.log(key)
+    const keyFinder = sheet.createTextFinder(key);
+    const destiny = keyFinder.findAll();
+    const first = destiny[0];
+    console.log(first.getA1Notation());
+    first.activate();
+    var infrow= first.getRow();
+    var ngay = Utilities.formatString("%02d",sheet.getRange(infrow,2,1,1).getValue().getDate());
+    var thang= Utilities.formatString("%02d",sheet.getRange(infrow,2,1,1).getValue().getMonth()+1);
+    var nam=sheet.getRange(infrow,2,1,1).getValue().getFullYear();
+    var recentday=ngay+"/"+thang+"/"+nam;
+    Logger.log(recentday);
+    var datefolder = folders.getFoldersByName(recentday);
+    var a=datefolder.hasNext();
+    Logger.log(a);
+      if (a==true){
+      var datefolders = datefolder.next();
+      var driverfolder = datefolders.getFoldersByName(sheet.getRange(infrow,4,1,1).getValue()+" "+key);
+      var b = driverfolder.hasNext();
+      if (b==true){ 
+        var driverfolders =driverfolder.next();
+        //var imagefile = driverfolders.getFilesByName(key+"_"+uploadfile.getName().split(".")[1]);
+        //var c = imagefile.hasNext();
+        //if (c==false){uploadfile.setName(key+"_"+uploadfile.getName().split(".")[1]).moveTo(driverfolders);}
+        //else{uploadfile.setTrashed(true)}}
+        uploadfile.setName(key+"_"+uploadfile.getName().split(".")[1]).moveTo(driverfolders)}
+      
+      else{var newfolder=datefolders.createFolder(sheet.getRange(infrow,4,1,1).getValue()+" "+key);
+          uploadfile.setName(key+"_"+uploadfile.getName().split(".")[1]).moveTo(newfolder);}}
+      else{
+      var datefolders=folders.createFolder(recentday);
+      var  newfolder=datefolders.createFolder(sheet.getRange(infrow,4,1,1).getValue()+" "+key);
+     uploadfile.setName(key+"_"+uploadfile.getName().split(".")[1]).moveTo(newfolder);}
+}
+}
